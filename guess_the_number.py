@@ -1,30 +1,52 @@
 import random
 
-def guess_the_number():
-    # Generate a random number between 1 and 100
-    number_to_guess = random.randint(1, 100)
-    attempts = 0
-    guessed = False
+def choose_word():
+    words = ["python", "hangman", "programming", "challenge", "computer"]
+    return random.choice(words)
 
-    print("Welcome to 'Guess the Number'!")
-    print("I'm thinking of a number between 1 and 100.")
+def display_word(word, guessed_letters):
+    displayed = ""
+    for letter in word:
+        if letter in guessed_letters:
+            displayed += letter + " "
+        else:
+            displayed += "_ "
+    return displayed.strip()
 
-    while not guessed:
-        try:
-            # Get user input
-            player_guess = int(input("Enter your guess: "))
-            attempts += 1
+def main():
+    print("Welcome to the Word Guessing Game!")
+    
+    word_to_guess = choose_word()
+    guessed_letters = set()
+    attempts_remaining = 10  # Increased attempts to 10
 
-            # Check if the guess is correct
-            if player_guess < number_to_guess:
-                print("Too low! Try again.")
-            elif player_guess > number_to_guess:
-                print("Too high! Try again.")
-            else:
-                guessed = True
-                print(f"Congratulations! You've guessed the number {number_to_guess} in {attempts} attempts.")
-        except ValueError:
-            print("Please enter a valid integer.")
+    while attempts_remaining > 0:
+        print("\nWord to guess:", display_word(word_to_guess, guessed_letters))
+        print(f"Attempts remaining: {attempts_remaining}")
+        
+        guess = input("Guess a letter: ").lower()
+        
+        if len(guess) != 1 or not guess.isalpha():
+            print("Please enter a single letter.")
+            continue
+        
+        if guess in guessed_letters:
+            print("You've already guessed that letter.")
+            continue
+        
+        guessed_letters.add(guess)
+
+        if guess in word_to_guess:
+            print(f"Good job! '{guess}' is in the word.")
+        else:
+            print(f"Sorry, '{guess}' is not in the word.")
+            attempts_remaining -= 1
+
+        if all(letter in guessed_letters for letter in word_to_guess):
+            print("\nCongratulations! You've guessed the word:", word_to_guess)
+            break
+    else:
+        print("\nOut of attempts! The word was:", word_to_guess)
 
 if __name__ == "__main__":
-    guess_the_number()
+    main()
